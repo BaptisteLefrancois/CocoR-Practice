@@ -20,7 +20,7 @@ most 2 sons, which are again binary trees.
            /      \               class Node{                     (Brussels)  
        Brussels  Paris                String name;                (Paris
                  /   \                Node left;                      (Madrid)
-            Madrid  Rome              Node rigth;                     (Rome
+            Madrid  Rome              Node right;                     (Rome
                        \          }                                       ()
                      Vienna                                               (Vienna)
                                                                       )
