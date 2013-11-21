@@ -1,4 +1,4 @@
-CocoR-Practices
+CocoR-Practice
 ===============
 
 A couple of examples in order to create a parser/compiler for DSLs thanks the effectiveness of [Coco/R] [1]
