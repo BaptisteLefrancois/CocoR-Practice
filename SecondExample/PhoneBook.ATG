@@ -1,0 +1,83 @@
+import java.io.*;
+import java.util.ArrayList;
+
+COMPILER PhoneBook
+	ArrayList<PhoneEntry> phoneEntries = new ArrayList<PhoneEntry>();;
+CHARACTERS
+	letter = 'a' .. 'z' + 'A' .. 'Z'.
+	digit = "0123456789".
+	tab = '\t'.
+	cr = '\r'.
+	lf = '\n'.
+TOKENS
+	ident = letter ({letter} | ".").
+	number = digit {digit}.
+	sep = ",".
+	indic = '+'.
+	lpar = '('.
+	rpar = ')'.
+	eol = cr lf.
+COMMENTS FROM "//" TO cr lf
+COMMENTS FROM "/*" TO "*/" NESTED
+IGNORE
+	tab
+PRODUCTIONS
+
+	PhoneBook 												(.	PhoneEntry entry, entry1;	.)
+		= PhoneEntry<out entry> 							(.	phoneEntries.add(entry);	.)
+		{
+			PhoneEntry<out entry1>							(.	phoneEntries.add(entry1);	.)
+		}.
+	
+	PhoneEntry<out PhoneEntry entry>						(. 	entry = new PhoneEntry(); 
+																PhoneInfo pi, pi1;	.)
+		= ident 											(.	entry.setLastName(t.val);		.)	
+		{
+			ident											(.	entry.setLastName(t.val);		.)	
+		} SYNC
+		sep 
+		ident												(.	entry.setFirstName(t.val); .)
+		{
+			ident											(.	entry.setFirstName(t.val); .)
+		} [eol] 
+		PhoneInfo<out pi> 									(. 	entry.getPhones().add(pi); 	.)
+		{
+			PhoneInfo<out pi1>								(. 	entry.getPhones().add(pi1);	.)
+		}.
+	
+	PhoneInfo<out PhoneInfo pi> 							(. 	pi = new PhoneInfo();
+																String pt = "home";	.)
+		= SYNC [PhoneType<out pt>									
+		] 													(.	pi.setType(pt);		.)
+		PhoneNumber<pi>.								
+	
+	PhoneType<out String pt> 								(.	pt = "";	.)
+		= "home" 											(.	pt = "home";	.)
+		| "office" 											(.	pt = "office";	.)
+		| "mobile"											(.	pt = "mobile";	.) .
+	
+	PhoneNumber<PhoneInfo pi> 								(.	String cc, ccp;	.)
+		= CountryCode<out cc> 								(.	pi.setCountryCode(cc);		.)
+		CityCodePrefix<out ccp> 							
+		number 												(.	pi.setCityCode(ccp + t.val);.)
+		number												(.	pi.setNumber(t.val);		.)
+		{ number											(.	pi.setNumber(t.val);		.)
+		}													
+		(eol | EOF)
+		|													(.	pi.setCountryCode("+44"); 	
+																pi.setCityCode("020");		.)
+		number												(. 	if(t.val.substring(0,1).equals("0")) pi.setCityCode(t.val); 
+																else pi.setNumber(t.val);	.)
+		{ number											(.	pi.setNumber(t.val);		.)
+		}														
+		(eol | EOF).
+	
+	CountryCode<out String cc> 								
+		= indic 											(.	cc = t.val;		.)
+		number												(.	cc += t.val;	.).
+	
+	CityCodePrefix<out String ccp> 							
+		= lpar "0" rpar										(.	ccp = "(0)";	.).
+				
+
+END PhoneBook.
