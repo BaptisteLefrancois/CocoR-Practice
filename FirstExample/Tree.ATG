@@ -1,0 +1,34 @@
+import java.io.*;
+COMPILER TreeGen
+    XmlGenerator xml;
+
+IGNORECASE
+
+CHARACTERS
+	char = 'A'..'Z'.
+	tab  = '\u0009'.
+	lf   = '\u000a'.
+	cr   = '\u000d'.
+	
+TOKENS
+	ident = char {char}.
+	lpar = "(".
+	rpar = ")".
+
+COMMENTS FROM "//" TO cr lf		
+IGNORE tab + lf + cr
+	
+PRODUCTIONS
+    TreeGen = Tree.
+	Tree =      "(" 
+                        (                   (. xml.printEmptyNodeTag(); .)
+                        |Node               
+											(. xml.printCloseNodeTag(); .)
+					   )                   
+                    ")"                    	
+					.
+	Node =      ident   					(. xml.printOpenNodeTag(t.val); .)
+				[Children].             
+	Children =  Tree Tree.
+	
+END TreeGen.

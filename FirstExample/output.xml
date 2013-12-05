@@ -1,0 +1,10 @@
+<Node name='London'>
+	<Node name='Brussels'></Node>
+	<Node name='Paris'>
+		<Node name='Madrid'></Node>
+		<Node name='Rome'>
+			<Node empty />
+			<Node name='Vienna'></Node>
+		</Node>
+	</Node>
+</Node>
